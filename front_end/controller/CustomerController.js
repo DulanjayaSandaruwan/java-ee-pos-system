@@ -2,7 +2,7 @@
 function generateCustomerId() {
 
     $.ajax({
-        url: "http://localhost:8080/pos_system/customer", method: "get", success(resp) {
+        url: "http://localhost:8080/pos_system/customer", method: "GET", success(resp) {
             try {
                 let lastCustId = resp.data[resp.data.length - 1].Id;
                 let newCustId = parseInt(lastCustId.substring(1, 4)) + 1;

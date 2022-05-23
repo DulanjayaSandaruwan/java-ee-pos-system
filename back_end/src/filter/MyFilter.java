@@ -21,14 +21,18 @@ public class MyFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest) servletRequest;
-        HttpServletResponse resp = (HttpServletResponse) servletResponse;
+        filterChain.doFilter(servletRequest, servletResponse);
 
-        filterChain.doFilter(servletRequest,servletResponse);
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        resp.addHeader("Access-Control-Allow-Origin ","*");
-        resp.addHeader("Access-Control-Allow-Methods", "DELETE, PUT");
-        resp.addHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        response.setHeader("X-XSS-Protection", "1; mode=block");
+        response.setHeader("Strict-Transport-Security", "max-age=7776000; includeSubdomains");
+        response.addHeader("X-Content-Type-Options", "nosniff");
+        response.addHeader("X-FRAME-OPTIONS", "SAMEORIGIN");
     }
 
     @Override
