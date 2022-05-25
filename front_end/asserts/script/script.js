@@ -9,11 +9,12 @@ function showManageItemForm() {
     $("#description-alert").text("");
     $("#qty-alert").text("");
     $("#unitPrice-alert").text("");
-    getAllItems();
     $("#manageItemForm").css("display", "block");
     $("#placeOrderForm").css("display", "none");
     $("#manageCustomerForm").css("display", "none");
     $("#manageOrderForm").css("display", "none");
+    getAllItems();
+    generateItemCode();
 }
 
 function showPlaceOrderForm() {

@@ -5,7 +5,7 @@ function generateCustomerId() {
         url: "http://localhost:8080/pos_system/customer", method: "GET", success(resp) {
             try {
                 let lastCustId = resp.data[resp.data.length - 1].Id;
-                let newCustId = parseInt(lastCustId.substring(1, 4)) + 1;
+                let newCustId = parseInt(lastCustId.substring(1, 5)) + 1;
 
                 if (newCustId < 10) {
                     $("#txtSearchCustomer").val("C00" + newCustId);
@@ -41,7 +41,7 @@ function addCustomer() {
             url: "http://localhost:8080/pos_system/customer", method: "post", data: data, success(resp) {
                 alert(resp.data)
                 getAllCustomers();
-                generateCustomerId()
+                generateCustomerId();
             }
         })
 

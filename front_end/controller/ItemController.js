@@ -1,21 +1,26 @@
 /*Generate Item Code*/
 function generateItemCode() {
-    try {
-        let lastItemCode = itemTable[itemTable.length-1].getCode();
-        let newItemCode = parseInt(lastItemCode.substring(1,4))+1;
-        if (newItemCode < 10) {
-            $("#item-code").text("#I-00"+newItemCode);
-        }else if (newItemCode < 100) {
-            $("#item-code").text("#I-0"+newItemCode);
-        } else {
-            $("#item-code").text("#I-"+newItemCode);
-        }
-    } catch (e) {
-        $("#item-code").text("#I-001");
-    }
 
+    $.ajax({
+        url: "http://localhost:8080/pos_system/item", method: "GET", success(resp) {
+            try {
+                let lastItemCode = resp.data[resp.data.length - 1].ItemCode;
+                let newItemCode = parseInt(lastItemCode.substring(1, 5))*-1 + 1;
+
+                if (newItemCode < 10) {
+                    $("#txtSearchItem").val("I-00" + newItemCode);
+                } else if (newItemCode < 100) {
+                    $("#txtSearchItem").val("I-0" + newItemCode);
+                } else {
+                    $("#txtSearchItem").val("I-" + newItemCode);
+                }
+            } catch (e) {
+                $("#txtSearchItem").val("I-001");
+            }
+        }
+    })
 }
-generateItemCode();
+// generateItemCode();
 
 /*Add items to Item table*/
 $("#btnAddItem").click(function () {
@@ -34,7 +39,8 @@ function addItem() {
         $.ajax({
             url: "http://localhost:8080/pos_system/item", method: "post", data: data, success(resp) {
                 alert(resp.data)
-
+                getAllItems();
+                generateItemCode();
             }
         })
     } else {
@@ -50,14 +56,25 @@ function setItemDetailsValue(description, qty, unitPrice) {
 
 function getAllItems() {
     $("#tblItems-manage-items > tbody").empty();
-    for (let i = 0; i < itemTable.length; i++) {
-        $("#tblItems-manage-items > tbody").append("<tr>" +
-            "<td>"+itemTable[i].getCode()+"</td>" +
-            "<td>"+itemTable[i].getDescription()+"</td>" +
-            "<td>"+itemTable[i].getQty()+"</td>" +
-            "<td>"+itemTable[i].getUnitPrice()+"</td>" +
-            "</tr>");
-    }
+
+    $.ajax({
+        url: "http://localhost:8080/pos_system/item", method: "get", success(resp) {
+            for (const respElement of resp.data) {
+                $("#tblItems-manage-items > tbody").append("<tr>" + "<td>" + respElement.ItemCode + "</td>" + "<td>" +
+                    respElement.Description + "</td>" + "<td>" + respElement.QtyOnHand + "</td>" + "<td>" +
+                    respElement.UnitPrice + "</td>" + "</tr>");
+            }
+        }
+    })
+
+    // for (let i = 0; i < itemTable.length; i++) {
+    //     $("#tblItems-manage-items > tbody").append("<tr>" +
+    //         "<td>"+itemTable[i].getCode()+"</td>" +
+    //         "<td>"+itemTable[i].getDescription()+"</td>" +
+    //         "<td>"+itemTable[i].getQty()+"</td>" +
+    //         "<td>"+itemTable[i].getUnitPrice()+"</td>" +
+    //         "</tr>");
+    // }
 }
 
 /*Select item from Item table*/

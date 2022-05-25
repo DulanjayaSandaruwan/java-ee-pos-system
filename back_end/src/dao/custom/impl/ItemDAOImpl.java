@@ -3,11 +3,14 @@ package dao.custom.impl;
 import dao.custom.ItemDAO;
 import entity.Item;
 
+import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -48,6 +51,33 @@ public class ItemDAOImpl implements ItemDAO {
 
     @Override
     public JsonArrayBuilder getAll(DataSource dataSource) throws SQLException, ClassNotFoundException {
-        return null;
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Item");
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()) {
+            String ItemCode = resultSet.getString(1);
+            String Description = resultSet.getString(2);
+            String QtyOnHand = String.valueOf(resultSet.getInt(3));
+            String UnitPrice = String.valueOf(resultSet.getDouble(4));
+
+            objectBuilder.add("ItemCode", ItemCode);
+            objectBuilder.add("Description", Description);
+            objectBuilder.add("QtyOnHand", QtyOnHand);
+            objectBuilder.add("UnitPrice", UnitPrice);
+
+            JsonObject build = objectBuilder.build();
+
+            arrayBuilder.add(build);
+        }
+
+        connection.close();
+
+        return arrayBuilder;
+
     }
 }

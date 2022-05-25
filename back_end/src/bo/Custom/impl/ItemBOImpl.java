@@ -29,7 +29,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public JsonArrayBuilder loadAllItem(DataSource d) throws SQLException, ClassNotFoundException {
-        return null;
+        return itemDAO.getAll(d);
     }
 
     @Override
