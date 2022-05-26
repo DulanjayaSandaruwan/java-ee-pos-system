@@ -5,9 +5,7 @@ import bo.Custom.ItemBO;
 import dto.ItemDTO;
 
 import javax.annotation.Resource;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -89,4 +87,47 @@ public class ItemServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+
+        resp.setContentType("application/json");
+
+        PrintWriter writer = resp.getWriter();
+
+        String itemCode = jsonObject.getString("ItemCode");
+        String description = jsonObject.getString("Description");
+        int qtyOnHand = Integer.parseInt(jsonObject.getString("QtyOnHand"));
+        double unitPrice = Double.parseDouble(jsonObject.getString("UnitPrice"));
+
+        ItemDTO itemDTO = new ItemDTO(itemCode, description, qtyOnHand, unitPrice);
+
+        try {
+            if (itemBO.updateItem(itemDTO, dataSource)){
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                resp.setStatus(HttpServletResponse.SC_CREATED);
+                objectBuilder.add("status", 200);
+                objectBuilder.add("message", "done");
+                objectBuilder.add("data", "Sucessfully Updated !");
+                writer.print(objectBuilder.build());
+            }
+        } catch (SQLException e) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            objectBuilder.add("status", 500);
+            objectBuilder.add("message", "error");
+            objectBuilder.add("data", e.getLocalizedMessage() );
+            writer.print(objectBuilder.build());
+        } catch (ClassNotFoundException e) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            objectBuilder.add("status", 500);
+            objectBuilder.add("message", "error");
+            objectBuilder.add("data", e.getLocalizedMessage());
+            writer.print(objectBuilder.build());
+        }
+
+
+    }
 }

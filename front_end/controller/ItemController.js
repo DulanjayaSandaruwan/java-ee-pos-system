@@ -106,17 +106,21 @@ $("#btnUpdateItem").click(function () {
         let unitPrice = $("#txtUnitPrice").val();
         let qty = $("#txtItemQTY").val();
 
-        for (let i = 0; i < itemTable.length; i++) {
-            if (itemTable[i].getCode() === code ) {
-                itemTable[i].setDescription(description);
-                itemTable[i].setQty(qty);
-                itemTable[i].setUnitPrice(unitPrice);
-            }
+        var itemObject = {
+            "ItemCode": code, "Description": description, "QtyOnHand": qty, "UnitPrice": unitPrice
         }
-        getAllItems();
-        alert("Item was updated!");
-        setItemDetailsValue("", "", "");
-        $("#txtSearchItem").val("");
+
+        $.ajax({
+            url: "http://localhost:8080/pos_system/item",
+            method: "put",
+            contentType: "application/json",
+            data: JSON.stringify(itemObject),
+            success(resp) {
+                alert(resp.data)
+                getAllItems();
+            }
+        })
+
     } else {
         alert("Select an Item to Update!");
     }
