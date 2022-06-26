@@ -127,7 +127,39 @@ public class ItemServlet extends HttpServlet {
             objectBuilder.add("data", e.getLocalizedMessage());
             writer.print(objectBuilder.build());
         }
+    }
 
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String itemCode = req.getParameter("itemCode");
 
+        resp.setContentType("application/json");
+
+        PrintWriter writer = resp.getWriter();
+
+        try {
+            if(itemBO.deleteItem(itemCode, dataSource)){
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                resp.setStatus(HttpServletResponse.SC_CREATED);
+                objectBuilder.add("status", 200);
+                objectBuilder.add("message", "done");
+                objectBuilder.add("data", "Sucessfully Deleted !");
+                writer.print(objectBuilder.build());
+            }
+        } catch (SQLException e) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            objectBuilder.add("status", 500);
+            objectBuilder.add("message", "error");
+            objectBuilder.add("data", e.getLocalizedMessage() );
+            writer.print(objectBuilder.build());
+        } catch (ClassNotFoundException e) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            objectBuilder.add("status", 500);
+            objectBuilder.add("message", "error");
+            objectBuilder.add("data", e.getLocalizedMessage() );
+            writer.print(objectBuilder.build());
+        }
     }
 }

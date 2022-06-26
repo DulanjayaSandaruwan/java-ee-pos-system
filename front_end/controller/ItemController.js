@@ -128,19 +128,28 @@ $("#btnUpdateItem").click(function () {
 
 /*Remove an Item*/
 $("#btnRemoveItem").click(function () {
+
     if ($("#txtDescription").val().length !== 0) {
         let code = $("#txtSearchItem").val();
 
-        for (let i = 0; i < itemTable.length; i++) {
-            if (itemTable[i].getCode() === code ) {
-                itemTable.splice(i, 1);
+        $.ajax({
+            url: "http://localhost:8080/pos_system/item?itemCode=" + code, method: "delete", success(resp) {
+                alert(resp.data)
+                getAllItems();
+                generateItemCode();
             }
-        }
-        getAllItems();
-        alert("Item was deleted!");
-        generateItemCode();
-        setItemDetailsValue("", "", "");
-        $("#txtSearchItem").val("");
+        })
+
+        // for (let i = 0; i < itemTable.length; i++) {
+        //     if (itemTable[i].getCode() === code ) {
+        //         itemTable.splice(i, 1);
+        //     }
+        // }
+        // getAllItems();
+        // alert("Item was deleted!");
+        // generateItemCode();
+        // setItemDetailsValue("", "", "");
+        // $("#txtSearchItem").val("");
     } else {
         alert("Select an Item to Remove!");
     }
